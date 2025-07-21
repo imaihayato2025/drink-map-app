@@ -5,48 +5,19 @@ import { useEffect, useRef, useState } from "react";
 declare global {
   interface Window {
     google: typeof google;
+    _googleMapsScriptLoading?: boolean;
   }
-}
-
-function SearchMenu({ onSearch }: { onSearch: (keyword: string) => void }) {
-  return (
-    <div>
-      <div className="fixed top-[50px] left-1/2 transform -translate-x-1/2 w-[90%] z-10">
-        <form
-          className="w-full"
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <div className="relative">
-            <img
-              src="/search.svg"
-              alt="検索"
-              className="absolute z-10 left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 bg-white"
-            />
-            <input
-              type="text"
-              placeholder="ここで検索"
-              className="bg-white pl-10 pr-6 py-3 border border-blue-500 w-full rounded-full drop-shadow-sm"
-              onChange={(e) => onSearch(e.target.value)}
-            />
-          </div>
-        </form>
-      </div>
-    </div>
-  );
 }
 
 export default function GoogleMapWithSearch() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
 
   const vendingMachines = [
     {
       lat: 35.5795,
-      lng: 140.0930,
+      lng: 140.093,
       title: "自販機①",
       icon: "/my-location-icon.svg",
       drinks: ["マウンテンデュー", "お茶"],
@@ -65,19 +36,6 @@ export default function GoogleMapWithSearch() {
   useEffect(() => {
     if (!mapRef.current) return;
 
-    const loadMapScript = () => {
-      if (window.google?.maps) {
-        initMap();
-        return;
-      }
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=ja`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => initMap();
-      document.head.appendChild(script);
-    };
-
     const initMap = () => {
       const fallbackCenter = { lat: 35.5791, lng: 140.0943 };
       const mapObj = new window.google.maps.Map(mapRef.current!, {
@@ -87,8 +45,18 @@ export default function GoogleMapWithSearch() {
         streetViewControl: false,
         fullscreenControl: false,
         zoomControl: false,
+        keyboardShortcuts: false,
       });
       setMap(mapObj);
+
+      const currentLocationIcon = {
+        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
+        fillColor: "#1976d2",
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scale: 1.5,
+        anchor: new window.google.maps.Point(12, 24),
+      };
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -99,68 +67,78 @@ export default function GoogleMapWithSearch() {
               position: pos,
               map: mapObj,
               title: "あなたの現在地",
-              icon: {
-                url: "/my-location-icon.svg",
-                scaledSize: new window.google.maps.Size(30, 30),
-              },
+              icon: currentLocationIcon,
             });
           },
           () => {}
         );
       }
+
+      const newMarkers = vendingMachines.map((vm) => {
+        const marker = new window.google.maps.Marker({
+          position: { lat: vm.lat, lng: vm.lng },
+          map: mapObj,
+          title: vm.title,
+          icon: {
+            url: vm.icon,
+            scaledSize: new window.google.maps.Size(50, 50),
+          },
+        });
+
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: `
+            <div style="
+              font-family: Roboto, sans-serif;
+              border-radius: 8px;
+              padding: 12px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+              background-color: white;
+              max-width: 200px;
+            ">
+              <div style="font-weight: 600; font-size: 16px; margin-bottom: 8px; color: #1976d2;">
+                ${vm.title}
+              </div>
+              <div style="font-size: 14px; color: #333;">
+                <strong>販売ジュース:</strong><br>
+                ${vm.drinks
+                  .map((drink, i) => `<div>${drink} - <span style="color:#666;">${vm.price[i]}円</span></div>`)
+                  .join("")}
+              </div>
+            </div>
+          `,
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.open(mapObj, marker);
+        });
+
+        return marker;
+      });
+
+      setMarkers(newMarkers);
     };
 
-    loadMapScript();
+    if (window.google?.maps) {
+      // 既に読み込み済みならinitだけ呼ぶ
+      initMap();
+    } else if (!window._googleMapsScriptLoading) {
+      // まだ読み込んでいなければスクリプト追加
+      window._googleMapsScriptLoading = true;
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=ja`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => initMap();
+      document.head.appendChild(script);
+    }
+    // 2回目以降のロードはスクリプト追加しないのでinitMapは呼ばれないが、
+    // window.google?.mapsチェックで初期化は保証される
   }, []);
 
-  useEffect(() => {
-    if (!map) return;
-
-    markers.forEach((marker) => marker.setMap(null));
-    setMarkers([]);
-
-    const filtered = vendingMachines.filter((vm) =>
-      vm.drinks.some((drink) => drink.includes(searchKeyword))
-    );
-
-    const newMarkers = filtered.map((vm) => {
-      const marker = new window.google.maps.Marker({
-        position: { lat: vm.lat, lng: vm.lng },
-        map,
-        title: vm.title,
-        icon: {
-          url: vm.icon,
-          scaledSize: new window.google.maps.Size(50, 50),
-        },
-      });
-
-      const infoWindow = new window.google.maps.InfoWindow({
-        content: `<div>
-          <strong>${vm.title}</strong><br>
-          販売ジュース:<br>
-          ${vm.drinks
-            .map((drink, i) => `${drink} - ${vm.price[i]}円`)
-            .join("<br>")}
-        </div>`,
-      });
-
-      marker.addListener("click", () => {
-        infoWindow.open(map, marker);
-      });
-
-      return marker;
-    });
-
-    setMarkers(newMarkers);
-  }, [searchKeyword, map]);
-
   return (
-    <>
-      <SearchMenu onSearch={setSearchKeyword} />
-      <div
-        ref={mapRef}
-        style={{ width: "100%", height: "100vh", borderRadius: "8px" }}
-      />
-    </>
+    <div
+      ref={mapRef}
+      style={{ width: "100%", height: "100vh", borderRadius: "8px" }}
+    />
   );
 }
