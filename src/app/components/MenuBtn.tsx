@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
@@ -9,17 +9,15 @@ import SettingsIcon from "@mui/icons-material/Settings";
 
 const routes = ["/", "/saved", "/settings"];
 
-export default function MenuBtn() {
+export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
   const router = useRouter();
   const pathname = usePathname();
   const [value, setValue] = useState(() => {
-    // 現在のパスに対応するインデックスを初期値に
     const index = routes.indexOf(pathname);
     return index === -1 ? 0 : index;
   });
 
   useEffect(() => {
-    // pathnameが変わったらvalueも更新（ブラウザの戻るボタンなど対応）
     const index = routes.indexOf(pathname);
     if (index !== -1 && index !== value) {
       setValue(index);
@@ -27,6 +25,9 @@ export default function MenuBtn() {
   }, [pathname]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    if (newValue === 0 && onMapClick) {
+      onMapClick(); // トップページ（探す）タブ押下時だけローディング開始通知
+    }
     setValue(newValue);
     router.push(routes[newValue]);
   };
@@ -53,7 +54,7 @@ export default function MenuBtn() {
           borderRadius: "16px",
           backgroundColor: "white",
           "& .Mui-selected": {
-            color: "#1976d2", // MUIのprimaryカラー
+            color: "#1976d2",
           },
           transition: "all 0.3s ease",
         }}
