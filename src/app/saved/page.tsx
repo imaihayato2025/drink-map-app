@@ -1,9 +1,12 @@
 "use client";
 import MenuBtn from "../components/MenuBtn";
+import Header from "../components/Header";
 
 export default function SavedPage() {
   return (
     <div>
+           {/* ✅ ヘッダー */}
+          <Header title="お気に入り" />
     <div
       style={{
         height: "100vh",

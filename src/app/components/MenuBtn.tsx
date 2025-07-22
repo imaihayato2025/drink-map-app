@@ -6,8 +6,9 @@ import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import SettingsIcon from "@mui/icons-material/Settings";
+import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 
-const routes = ["/", "/saved", "/settings"];
+const routes = ["/", "/drink", "/saved", "/settings"];
 
 export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
   const router = useRouter();
@@ -60,17 +61,21 @@ export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
         }}
       >
         <BottomNavigationAction
-          label="探す"
-          icon={<MapIcon sx={{ fontSize: 28, mb: 0.5 }} />}
-        />
-        <BottomNavigationAction
-          label="保存済み"
-          icon={<BookmarkIcon sx={{ fontSize: 28, mb: 0.5 }} />}
-        />
-        <BottomNavigationAction
-          label="設定"
-          icon={<SettingsIcon sx={{ fontSize: 28, mb: 0.5 }} />}
-        />
+  label="探す"
+  icon={<MapIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+/>
+<BottomNavigationAction
+  label="ジャンル"
+  icon={<LocalDrinkIcon sx={{ fontSize: 28, mb: 0.5 }} />} // ← ここを変更
+/>
+<BottomNavigationAction
+  label="お気に入り"
+  icon={<BookmarkIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+/>
+<BottomNavigationAction
+  label="設定"
+  icon={<SettingsIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+/>
       </BottomNavigation>
     </Paper>
   );

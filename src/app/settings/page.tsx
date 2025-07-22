@@ -1,9 +1,12 @@
 "use client";
 import MenuBtn from "../components/MenuBtn";
+import Header from "../components/Header";
 
 export default function SettingsPage() {
   return (
     <div>
+             {/* ✅ ヘッダー */}
+                <Header title="設定" />
     <div
       style={{
         height: "100vh",

@@ -19,7 +19,7 @@ export default function SearchMenu() {
       <form style={{ width: "100%" }} onSubmit={(e) => e.preventDefault()}>
         <TextField
           fullWidth
-          placeholder="ここで検索"
+          placeholder="自販機または飲み物を検索"
           variant="outlined"
           size="small"
           sx={{
