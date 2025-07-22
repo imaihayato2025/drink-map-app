@@ -13,21 +13,25 @@ const routes = ["/", "/drink", "/saved", "/settings"];
 export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
   const router = useRouter();
   const pathname = usePathname();
+
+  // 現在のパスに対応するインデックスを初期値にセット
   const [value, setValue] = useState(() => {
     const index = routes.indexOf(pathname);
     return index === -1 ? 0 : index;
   });
 
+  // パスが変わったらvalueも更新
   useEffect(() => {
     const index = routes.indexOf(pathname);
     if (index !== -1 && index !== value) {
       setValue(index);
     }
-  }, [pathname]);
+  }, [pathname, value]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    // 「探す」タブの場合のみ追加動作を実行
     if (newValue === 0 && onMapClick) {
-      onMapClick(); // トップページ（探す）タブ押下時だけローディング開始通知
+      onMapClick();
     }
     setValue(newValue);
     router.push(routes[newValue]);
@@ -43,6 +47,7 @@ export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
         width: "92%",
         borderRadius: "16px",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        zIndex: 1300, // MUIのモーダル系の上に重なるように調整（必要に応じて）
       }}
       elevation={3}
     >
@@ -51,7 +56,7 @@ export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
         value={value}
         onChange={handleChange}
         sx={{
-          height: "70px",
+          height: 70,
           borderRadius: "16px",
           backgroundColor: "white",
           "& .Mui-selected": {
@@ -61,21 +66,21 @@ export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
         }}
       >
         <BottomNavigationAction
-  label="探す"
-  icon={<MapIcon sx={{ fontSize: 28, mb: 0.5 }} />}
-/>
-<BottomNavigationAction
-  label="ジャンル"
-  icon={<LocalDrinkIcon sx={{ fontSize: 28, mb: 0.5 }} />} // ← ここを変更
-/>
-<BottomNavigationAction
-  label="お気に入り"
-  icon={<BookmarkIcon sx={{ fontSize: 28, mb: 0.5 }} />}
-/>
-<BottomNavigationAction
-  label="設定"
-  icon={<SettingsIcon sx={{ fontSize: 28, mb: 0.5 }} />}
-/>
+          label="探す"
+          icon={<MapIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+        />
+        <BottomNavigationAction
+          label="ジャンル"
+          icon={<LocalDrinkIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+        />
+        <BottomNavigationAction
+          label="保存済み"
+          icon={<BookmarkIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+        />
+        <BottomNavigationAction
+          label="設定"
+          icon={<SettingsIcon sx={{ fontSize: 28, mb: 0.5 }} />}
+        />
       </BottomNavigation>
     </Paper>
   );

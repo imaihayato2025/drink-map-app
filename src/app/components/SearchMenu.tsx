@@ -26,12 +26,15 @@ export default function SearchMenu() {
             "& .MuiOutlinedInput-root": {
               borderRadius: "9999px",
               backgroundColor: "white",
-              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-              height: "45px", // ← 高さをここで指定
-              paddingRight: "12px", // 余白
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // ← 少し薄くした
+              height: "45px",
+              paddingRight: "12px",
+              "& fieldset": {
+                border: "none",
+              },
             },
             input: {
-              padding: "0 0 0 0", // 不要なpaddingを消す（調整用）
+              padding: 0,
             },
           }}
           InputProps={{

@@ -1,6 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  SwipeableDrawer,
+  Box,
+  Typography,
+  Divider,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 declare global {
   interface Window {
@@ -11,30 +20,52 @@ declare global {
 
 export default function GoogleMapWithSearch() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
+  const [selectedVM, setSelectedVM] = useState<{
+    title: string;
+    drinks: string[];
+    price: number[];
+    lat?: number;
+    lng?: number;
+  } | null>(null);
+  const [likedVMs, setLikedVMs] = useState<string[]>([]);
 
-  const vendingMachines = [
-    {
-      lat: 35.5795,
-      lng: 140.093,
-      title: "自販機①",
-      icon: "/my-location-icon.svg",
-      drinks: ["マウンテンデュー", "お茶"],
-      price: [150, 120],
-    },
-    {
-      lat: 35.5785,
-      lng: 140.0955,
-      title: "自販機②",
-      icon: "/my-location-icon.svg",
-      drinks: ["アルギニン", "コーラ"],
-      price: [130, 140],
-    },
-  ];
+  // ページ読み込み時にいいね情報を取得
+  useEffect(() => {
+    const storedLikes = localStorage.getItem("likedVMs");
+    if (storedLikes) setLikedVMs(JSON.parse(storedLikes));
+  }, []);
+
+  // いいねトグル
+  const toggleLike = (title: string) => {
+    let updatedLikes: string[];
+    if (likedVMs.includes(title)) {
+      updatedLikes = likedVMs.filter((t) => t !== title);
+    } else {
+      updatedLikes = [...likedVMs, title];
+    }
+    setLikedVMs(updatedLikes);
+    localStorage.setItem("likedVMs", JSON.stringify(updatedLikes));
+  };
 
   useEffect(() => {
     if (!mapRef.current) return;
+
+    const vendingMachines = [
+      {
+        lat: 35.5221,
+        lng: 140.0895,
+        title: "五井駅前自販機",
+        drinks: ["マウンテンデュー", "お茶"],
+        price: [150, 120],
+      },
+      {
+        lat: 35.5212,
+        lng: 140.0882,
+        title: "五井南口自販機",
+        drinks: ["アルギニン", "コーラ"],
+        price: [130, 140],
+      },
+    ];
 
     const initMap = () => {
       const fallbackCenter = { lat: 35.5791, lng: 140.0943 };
@@ -47,17 +78,19 @@ export default function GoogleMapWithSearch() {
         zoomControl: false,
         keyboardShortcuts: false,
       });
-      setMap(mapObj);
 
       const currentLocationIcon = {
-        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-        fillColor: "#1976d2",
-        fillOpacity: 1,
-        strokeWeight: 0,
-        scale: 1.5,
-        anchor: new window.google.maps.Point(12, 24),
+        url: "/my-location-icon.svg",
+        scaledSize: new window.google.maps.Size(30, 30),
+        anchor: new window.google.maps.Point(15, 30),
+      };
+      const vendingIcon = {
+        url: "/my-location-icon.svg",
+        scaledSize: new window.google.maps.Size(30, 30),
+        anchor: new window.google.maps.Point(15, 30),
       };
 
+      // 現在地マーカー
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           ({ coords }) => {
@@ -74,55 +107,37 @@ export default function GoogleMapWithSearch() {
         );
       }
 
-      const newMarkers = vendingMachines.map((vm) => {
+      // 自販機マーカー
+      vendingMachines.forEach((vm) => {
         const marker = new window.google.maps.Marker({
           position: { lat: vm.lat, lng: vm.lng },
           map: mapObj,
           title: vm.title,
-          icon: {
-            url: vm.icon,
-            scaledSize: new window.google.maps.Size(50, 50),
-          },
-        });
-
-        const infoWindow = new window.google.maps.InfoWindow({
-          content: `
-            <div style="
-              font-family: Roboto, sans-serif;
-              border-radius: 8px;
-              padding: 12px;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-              background-color: white;
-              max-width: 200px;
-            ">
-              <div style="font-weight: 600; font-size: 16px; margin-bottom: 8px; color: #1976d2;">
-                ${vm.title}
-              </div>
-              <div style="font-size: 14px; color: #333;">
-                <strong>販売ジュース:</strong><br>
-                ${vm.drinks
-                  .map((drink, i) => `<div>${drink} - <span style="color:#666;">${vm.price[i]}円</span></div>`)
-                  .join("")}
-              </div>
-            </div>
-          `,
+          icon: vendingIcon,
         });
 
         marker.addListener("click", () => {
-          infoWindow.open(mapObj, marker);
+          setSelectedVM(vm);
         });
-
-        return marker;
       });
 
-      setMarkers(newMarkers);
+      // localStorageのselectedVMTitleがあれば該当自販機にズーム＆詳細表示
+      const selectedTitle = localStorage.getItem("selectedVMTitle");
+      if (selectedTitle) {
+        const targetVM = vendingMachines.find((vm) => vm.title === selectedTitle);
+        if (targetVM) {
+          const position = { lat: targetVM.lat, lng: targetVM.lng };
+          mapObj.setCenter(position);
+          mapObj.setZoom(18);
+          setSelectedVM(targetVM);
+        }
+        localStorage.removeItem("selectedVMTitle");
+      }
     };
 
     if (window.google?.maps) {
-      // 既に読み込み済みならinitだけ呼ぶ
       initMap();
     } else if (!window._googleMapsScriptLoading) {
-      // まだ読み込んでいなければスクリプト追加
       window._googleMapsScriptLoading = true;
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&language=ja`;
@@ -131,14 +146,79 @@ export default function GoogleMapWithSearch() {
       script.onload = () => initMap();
       document.head.appendChild(script);
     }
-    // 2回目以降のロードはスクリプト追加しないのでinitMapは呼ばれないが、
-    // window.google?.mapsチェックで初期化は保証される
   }, []);
 
   return (
-    <div
-      ref={mapRef}
-      style={{ width: "100%", height: "100vh", borderRadius: "8px" }}
-    />
+    <>
+      <div
+        ref={mapRef}
+        style={{ width: "100%", height: "100vh", borderRadius: 8 }}
+      />
+
+      <SwipeableDrawer
+        anchor="bottom"
+        open={!!selectedVM}
+        onClose={() => setSelectedVM(null)}
+        onOpen={() => {}}
+        disableSwipeToOpen={true} // ← ここ重要！スワイプ開閉を無効化して不具合防止
+        PaperProps={{
+          style: {
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            height: "60vh",
+            overflow: "auto",
+          },
+        }}
+      >
+        {selectedVM && (
+          <Box p={2}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography variant="h6" color="primary">
+                {selectedVM.title}
+              </Typography>
+              <Box>
+                <IconButton
+                  onClick={() => toggleLike(selectedVM.title)}
+                  aria-label={
+                    likedVMs.includes(selectedVM.title)
+                      ? "いいねを取り消す"
+                      : "いいねする"
+                  }
+                >
+                  <FavoriteIcon
+                    color={
+                      likedVMs.includes(selectedVM.title) ? "error" : "disabled"
+                    }
+                  />
+                </IconButton>
+                <IconButton onClick={() => setSelectedVM(null)}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 1 }} />
+
+            {selectedVM.drinks.map((drink, i) => (
+              <Box
+                key={i}
+                display="flex"
+                justifyContent="space-between"
+                py={0.5}
+              >
+                <Typography>{drink}</Typography>
+                <Typography color="text.secondary">
+                  {selectedVM.price[i]}円
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </SwipeableDrawer>
+    </>
   );
 }

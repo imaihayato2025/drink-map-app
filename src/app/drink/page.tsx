@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Stack,
-  Box,
-} from "@mui/material";
+import { Typography, Button, Stack, Box } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import BubbleChartIcon from "@mui/icons-material/BubbleChart";
@@ -20,13 +13,10 @@ import Header from "../components/Header";
 export default function DrinkPage() {
   return (
     <div>
-      {/* ✅ ヘッダー */}
-    <Header title="ジャンル" />
-    
+      <Header title="ジャンル" />
 
-      {/* ✅ メインエリア */}
-      <Box sx={{ paddingTop: 1, paddingBottom: "100px" }}>
-        <Stack spacing={0} alignItems="stretch" justifyContent="center" sx={{ width: "100%" }}>
+      <Box sx={{ pt: 2, pb: 12 }}>
+        <Stack spacing={0} sx={{ width: "100%" }}>
           <CustomButton
             label="自販機の種類で探す"
             icon={<LocalDrinkIcon />}
@@ -60,8 +50,15 @@ export default function DrinkPage() {
   );
 }
 
-// ✅ カスタムボタンコンポーネント
-function CustomButton({ label, icon, onClick }: { label: string; icon: React.ReactNode; onClick: () => void }) {
+function CustomButton({
+  label,
+  icon,
+  onClick,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}) {
   return (
     <Button
       variant="text"
@@ -82,7 +79,7 @@ function CustomButton({ label, icon, onClick }: { label: string; icon: React.Rea
 
 const buttonStyle = {
   width: "100%",
-  height:"70px",
+  height: "70px",
   fontSize: 18,
   borderBottom: "1px solid #ccc",
   borderRadius: 0,
