@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import SearchMenu from "./components/SearchMenu";
 import MenuBtn from "./components/MenuBtn";
-import GoogleMap from "./components/GoogleMap";
+import MapContainer from "./components/MapContainer";
 import Loading from "./components/Loading";
 
 export default function Home() {
@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <>
-      <GoogleMap />
+     <MapContainer />
       <SearchMenu />
       <MenuBtn />
     </>

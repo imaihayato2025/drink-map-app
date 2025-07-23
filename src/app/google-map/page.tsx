@@ -1,7 +1,7 @@
 "use client";
 
-import GoogleMapWithSearch from "../components/GoogleMap";
+import MapContainer from "../components/MapContainer";
 
 export default function GoogleMapPage() {
-  return <GoogleMapWithSearch />;
+  return    <MapContainer />;
 }
