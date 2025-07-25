@@ -1,4 +1,4 @@
-# Next.jsで作成したNewsApp
+# Next.jsで作成した自販機マップアプリ
 
 ## 概要
 このアプリは、Next.js と TypeScript を使って構築したニュース閲覧アプリです。  
