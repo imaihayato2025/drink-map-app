@@ -15,8 +15,8 @@ NewsAPI から記事データを取得し、カテゴリーごとの閲覧、詳
 
 
 ## アプリイメージ
-![アプリ画面](./public/app.png)
+Coming Soon...
 
 ## デプロイ先
-[Vercel にて公開中](https://next-news-app-zeta.vercel.app/)
+Coming Soon...
 
