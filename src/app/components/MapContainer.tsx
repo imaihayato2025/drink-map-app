@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import VendingMachineDrawer from "./VendingMachineDrawer";
-import MapMarker from "./MapMarker";
+import { useSearchParams } from "next/navigation";
+import VendingMachineDrawer from "../components/VendingMachineDrawer";
+import MapMarker from "../components/MapMarker";
 
 declare global {
   interface Window {
@@ -34,34 +35,45 @@ const vendingMachinesData: VendingMachine[] = [
     drinks: ["アルギニン", "コーラ"],
     price: [130, 140],
   },
+  // 追加したい自販機データをここに足してください
 ];
 
-export default function MapContainer() {
+export default function MapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedVM, setSelectedVM] = useState<VendingMachine | null>(null);
   const [likedVMs, setLikedVMs] = useState<string[]>([]);
+  const searchParams = useSearchParams();
+  const targetDrink = searchParams.get("drink");
 
-  // ページ読み込み時にいいね情報を取得
+  // いいね情報のロード（初回のみ）
   useEffect(() => {
     const storedLikes = localStorage.getItem("likedVMs");
-    if (storedLikes) setLikedVMs(JSON.parse(storedLikes));
+    if (storedLikes) {
+      try {
+        setLikedVMs(JSON.parse(storedLikes));
+      } catch {
+        setLikedVMs([]);
+      }
+    }
   }, []);
 
-  // いいねトグル
+  // いいねトグル処理
   const toggleLike = (title: string) => {
-    let updatedLikes: string[];
-    if (likedVMs.includes(title)) {
-      updatedLikes = likedVMs.filter((t) => t !== title);
-    } else {
-      updatedLikes = [...likedVMs, title];
-    }
-    setLikedVMs(updatedLikes);
-    localStorage.setItem("likedVMs", JSON.stringify(updatedLikes));
+    setLikedVMs(prev => {
+      const updatedLikes = prev.includes(title) ? prev.filter(t => t !== title) : [...prev, title];
+      localStorage.setItem("likedVMs", JSON.stringify(updatedLikes));
+      return updatedLikes;
+    });
   };
 
+  // Google Maps 初期化・現在地取得
   useEffect(() => {
     if (!mapRef.current) return;
+
+    function distance(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+      return (a.lat - b.lat) ** 2 + (a.lng - b.lng) ** 2;
+    }
 
     const initMap = () => {
       const fallbackCenter = { lat: 35.5791, lng: 140.0943 };
@@ -83,11 +95,11 @@ export default function MapContainer() {
         anchor: new window.google.maps.Point(15, 30),
       };
 
-      // 現在地マーカー
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           ({ coords }) => {
             const pos = { lat: coords.latitude, lng: coords.longitude };
+
             mapObj.setCenter(pos);
             new window.google.maps.Marker({
               position: pos,
@@ -95,22 +107,31 @@ export default function MapContainer() {
               title: "あなたの現在地",
               icon: currentLocationIcon,
             });
-          },
-          () => {}
-        );
-      }
 
-      // localStorageのselectedVMTitleがあれば該当自販機にズーム＆詳細表示
-      const selectedTitle = localStorage.getItem("selectedVMTitle");
-      if (selectedTitle) {
-        const targetVM = vendingMachinesData.find((vm) => vm.title === selectedTitle);
-        if (targetVM) {
-          const position = { lat: targetVM.lat, lng: targetVM.lng };
-          mapObj.setCenter(position);
-          mapObj.setZoom(18);
-          setSelectedVM(targetVM);
-        }
-        localStorage.removeItem("selectedVMTitle");
+            if (targetDrink) {
+              const candidates = vendingMachinesData.filter(vm => vm.drinks.includes(targetDrink));
+
+              if (candidates.length === 0) {
+                alert("該当する自販機が見つかりませんでした");
+                return;
+              }
+
+              const nearest = candidates.reduce((prev, curr) => {
+                return distance(pos, { lat: curr.lat, lng: curr.lng }) < distance(pos, { lat: prev.lat, lng: prev.lng }) ? curr : prev;
+              });
+
+              mapObj.setCenter({ lat: nearest.lat, lng: nearest.lng });
+              mapObj.setZoom(18);
+              setSelectedVM(nearest);
+            }
+          },
+          () => {
+            alert("現在地の取得に失敗しました");
+          }
+        );
+      } else {
+        // Geolocation未対応時はフォールバックでマップ表示のみ
+        setSelectedVM(null);
       }
     };
 
@@ -125,15 +146,14 @@ export default function MapContainer() {
       script.onload = () => initMap();
       document.head.appendChild(script);
     }
-  }, []);
+  }, [targetDrink]);
 
   return (
     <>
       <div ref={mapRef} style={{ width: "100%", height: "100vh", borderRadius: 8 }} />
 
-      {/* マーカーは地図が用意できてから描画 */}
       {map &&
-        vendingMachinesData.map((vm) => (
+        vendingMachinesData.map(vm => (
           <MapMarker
             key={vm.title}
             map={map}

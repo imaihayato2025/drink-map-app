@@ -40,5 +40,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# .gitignore に以下を追加
-.env.local

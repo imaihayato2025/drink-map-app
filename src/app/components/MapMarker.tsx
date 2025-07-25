@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { VendingMachine } from "./MapContainer";
+//import type { VendingMachine } from "./MapContainer";
 
 type Props = {
   map: google.maps.Map;

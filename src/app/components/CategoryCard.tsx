@@ -7,13 +7,14 @@ import BubbleChartIcon from "@mui/icons-material/BubbleChart";
 import PlaceIcon from "@mui/icons-material/Place";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CategoryIcon from "@mui/icons-material/Category";
+
 import MenuBtn from "../components/MenuBtn";
 import Header from "../components/Header";
 
-export default function DrinkPage() {
+export default function JihanPage() {
   return (
     <div>
-      <Header title="ジャンル" />
+      <Header title="ジャンルで探す" />
 
       <Box sx={{ pt: 2, pb: 12 }}>
         <Stack spacing={0} sx={{ width: "100%" }}>
