@@ -8,7 +8,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 
-const routes = ["/", "/drink", "/saved", "/settings"];
+const routes = ["/", "/genre", "/saved", "/settings"];
 
 export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
   const router = useRouter();

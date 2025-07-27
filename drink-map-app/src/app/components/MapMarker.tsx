@@ -1,13 +1,19 @@
 import { useEffect, useRef } from "react";
-import type { VendingMachine } from "./MapContainer";
+
+type VendingMachine = {
+  lat: number;
+  lng: number;
+  title: string;
+};
 
 type Props = {
   map: google.maps.Map;
   vendingMachine: VendingMachine;
   onClick: () => void;
+  icon?: google.maps.Icon | string; // 追加：アイコンを受け取る
 };
 
-export default function MapMarker({ map, vendingMachine, onClick }: Props) {
+export default function MapMarker({ map, vendingMachine, onClick, icon }: Props) {
   const markerRef = useRef<google.maps.Marker | null>(null);
 
   useEffect(() => {
@@ -17,10 +23,10 @@ export default function MapMarker({ map, vendingMachine, onClick }: Props) {
       position: { lat: vendingMachine.lat, lng: vendingMachine.lng },
       map,
       title: vendingMachine.title,
-      icon: {
-        url: "/my-location-icon.svg",
-        scaledSize: new google.maps.Size(30, 30),
-        anchor: new google.maps.Point(15, 30),
+      icon: icon ?? {
+        url: "/drink-icon.svg", // 自販機デフォルトアイコン
+        scaledSize: new google.maps.Size(50, 50), // 50x50の正方形に修正（縦0はダメ）
+        anchor: new google.maps.Point(25, 50), // アイコンの底辺中央にアンカーをセット
       },
     });
 
@@ -30,11 +36,10 @@ export default function MapMarker({ map, vendingMachine, onClick }: Props) {
 
     markerRef.current = marker;
 
-    // クリーンアップ
     return () => {
       marker.setMap(null);
     };
-  }, [map, vendingMachine, onClick]);
+  }, [map, vendingMachine, onClick, icon]);
 
   return null;
 }
