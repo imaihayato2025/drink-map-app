@@ -41,16 +41,22 @@ type MapContainerProps = {
   drinkName: string;
 };
 
-const calculateDistance = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
-  (a.lat - b.lat) ** 2 + (a.lng - b.lng) ** 2;
+const calculateDistance = (
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number }
+) => (a.lat - b.lat) ** 2 + (a.lng - b.lng) ** 2;
 
 export default function MapContainer({ drinkName }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedVM, setSelectedVM] = useState<VendingMachine | null>(null);
   const [likedVMs, setLikedVMs] = useState<string[]>([]);
-  const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
-  const [currentLocationIcon, setCurrentLocationIcon] = useState<google.maps.Icon | null>(null);
+  const [currentPosition, setCurrentPosition] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [currentLocationIcon, setCurrentLocationIcon] =
+    useState<google.maps.Icon | null>(null);
 
   // ローカルストレージからお気に入り読み込み
   useEffect(() => {
@@ -126,7 +132,10 @@ export default function MapContainer({ drinkName }: MapContainerProps) {
 
           const target = drinkName
             ? candidates.reduce((prev, curr) =>
-                calculateDistance(userPos, curr) < calculateDistance(userPos, prev) ? curr : prev
+                calculateDistance(userPos, curr) <
+                calculateDistance(userPos, prev)
+                  ? curr
+                  : prev
               )
             : null;
 
@@ -175,7 +184,10 @@ export default function MapContainer({ drinkName }: MapContainerProps) {
 
   return (
     <>
-      <div ref={mapRef} style={{ width: "100%", height: "100vh", borderRadius: 8 }} />
+      <div
+        ref={mapRef}
+        style={{ width: "100%", height: "100vh", borderRadius: 8 }}
+      />
 
       {/* 現在地マーカー */}
       {map && currentPosition && currentLocationIcon && (
