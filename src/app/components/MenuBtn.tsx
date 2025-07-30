@@ -56,6 +56,7 @@ export default function MenuBtn({ onMapClick }: { onMapClick?: () => void }) {
         width: "92%",
         borderRadius: "16px",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+
         zIndex: 1300,
       }}
       elevation={3}

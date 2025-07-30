@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 
 type VendingMachine = {
+  id: string;
+  title: string;
+  drinks: string[];
+  price: number[];
   lat: number;
   lng: number;
-  title: string;
 };
 
 type Props = {
@@ -13,7 +16,12 @@ type Props = {
   icon?: google.maps.Icon | string; // 追加：アイコンを受け取る
 };
 
-export default function MapMarker({ map, vendingMachine, onClick, icon }: Props) {
+export default function MapMarker({
+  map,
+  vendingMachine,
+  onClick,
+  icon,
+}: Props) {
   const markerRef = useRef<google.maps.Marker | null>(null);
 
   useEffect(() => {

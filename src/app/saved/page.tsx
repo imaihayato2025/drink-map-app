@@ -16,34 +16,42 @@ type VendingMachine = {
 // vendingMachines はコンポーネント外で定義して再作成を防ぐ
 const vendingMachines: VendingMachine[] = [
   {
-    id: "01",
-    title: "五井駅前自販機",
+    id: "0001",
+    title: "五井駅前",
     drinks: ["マウンテンデュー", "お茶"],
     price: [150, 120],
   },
+
   {
-    id: "02",
-    title: "五井南口自販機",
+    id: "0002",
+    title: "五井南口",
     drinks: ["アルギニン", "コーラ"],
     price: [130, 140],
   },
   {
-    id: "03",
+    id: "0003",
     title: "日本訪問医療株式会社横",
     drinks: ["アルギニン"],
     price: [110],
   },
   {
-    id: "04",
+    id: "0004",
     title: "千葉神社近く",
     drinks: ["マウンテンデュー"],
     price: [110],
   },
   {
-    id: "05",
-    title: "ENEOS 357号浜野SS内自販機",
+    id: "0005",
+    title: "ENEOS 357号浜野SS内",
     drinks: ["マウンテンデュー"],
     price: [100],
+  },
+
+  {
+    id: "0006",
+    title: "リサイクルショップ愛品館前",
+    drinks: ["マウンテンデュー"],
+    price: [110],
   },
 ];
 

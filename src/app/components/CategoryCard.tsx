@@ -27,7 +27,7 @@ export default function JihanPage() {
       <Box sx={{ pt: 2, pb: 12 }}>
         <Stack spacing={0} sx={{ width: "100%" }}>
           <CustomButton
-            label="自販機の種類で探す"
+            label="炭酸の種類で探す"
             icon={<LocalDrinkIcon />}
             onClick={() => handleClick("自販機の種類")}
           />

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Typography,
-  Box,
-  Paper,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { Typography, Box, Paper, useTheme, useMediaQuery } from "@mui/material";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import BubbleChartIcon from "@mui/icons-material/BubbleChart";
 import PlaceIcon from "@mui/icons-material/Place";
@@ -18,11 +12,31 @@ import Header from "../components/Header";
 import { useRouter } from "next/navigation";
 
 const options = [
-  { label: "自販機の種類で探す", icon: <LocalDrinkIcon fontSize="inherit" />, path: "/genre/jihan" },
-  { label: "炭酸の種類で探す", icon: <BubbleChartIcon fontSize="inherit" />, path: "/genre/soda" },
-  { label: "近くから探す", icon: <PlaceIcon fontSize="inherit" />, path: "/genre/nearby" },
-  { label: "値段で探す", icon: <AttachMoneyIcon fontSize="inherit" />, path: "/genre/price" },
-  { label: "その他から探す", icon: <CategoryIcon fontSize="inherit" />, path: "/genre/other" },
+  {
+    label: "自販機の種類で探す",
+    icon: <LocalDrinkIcon fontSize="inherit" />,
+    path: "/genre/soda",
+  },
+  {
+    label: "炭酸の種類で探す",
+    icon: <BubbleChartIcon fontSize="inherit" />,
+    path: "/genre/jihan",
+  },
+  {
+    label: "近くから探す",
+    icon: <PlaceIcon fontSize="inherit" />,
+    path: "/genre/nearby",
+  },
+  {
+    label: "値段で探す",
+    icon: <AttachMoneyIcon fontSize="inherit" />,
+    path: "/genre/price",
+  },
+  {
+    label: "その他から探す",
+    icon: <CategoryIcon fontSize="inherit" />,
+    path: "/genre/other",
+  },
 ];
 
 export default function GenrePage() {
