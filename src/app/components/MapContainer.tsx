@@ -13,6 +13,7 @@ declare global {
 }
 
 export type VendingMachine = {
+  id: string;
   title: string;
   drinks: string[];
   price: number[];
@@ -24,6 +25,7 @@ const vendingMachinesData: VendingMachine[] = [
   {
     lat: 35.5221,
     lng: 140.0895,
+    id: "01",
     title: "五井駅前自販機",
     drinks: ["マウンテンデュー", "お茶"],
     price: [150, 120],
@@ -31,9 +33,34 @@ const vendingMachinesData: VendingMachine[] = [
   {
     lat: 35.5212,
     lng: 140.0882,
+    id: "02",
     title: "五井南口自販機",
     drinks: ["アルギニン", "コーラ"],
     price: [130, 140],
+  },
+  {
+    lat: 35.6168,
+    lng: 140.1214,
+    id: "03",
+    title: "日本訪問医療株式会社横",
+    drinks: ["アルギニン"],
+    price: [110],
+  },
+  {
+    lat: 35.6132,
+    lng: 140.1238,
+    id: "04",
+    title: "千葉神社近く",
+    drinks: ["マウンテンデュー"],
+    price: [110],
+  },
+  {
+    lat: 35.5568,
+    lng: 140.1255,
+    id: "05",
+    title: "ENEOS 357号浜野SS内自販機",
+    drinks: ["マウンテンデュー"],
+    price: [100],
   },
 ];
 
@@ -71,11 +98,11 @@ export default function MapContainer({ drinkName }: MapContainerProps) {
   }, []);
 
   // お気に入り切替
-  const toggleLike = (title: string) => {
+  const toggleLike = (id: string) => {
     setLikedVMs((prev) => {
-      const updated = prev.includes(title)
-        ? prev.filter((t) => t !== title)
-        : [...prev, title];
+      const updated = prev.includes(id)
+        ? prev.filter((t) => t !== id)
+        : [...prev, id];
       localStorage.setItem("likedVMs", JSON.stringify(updated));
       return updated;
     });
@@ -209,7 +236,7 @@ export default function MapContainer({ drinkName }: MapContainerProps) {
           .filter((vm) => (drinkName ? vm.drinks.includes(drinkName) : true))
           .map((vm) => (
             <MapMarker
-              key={vm.title}
+              key={vm.id}
               map={map}
               vendingMachine={vm}
               onClick={() => setSelectedVM(vm)}

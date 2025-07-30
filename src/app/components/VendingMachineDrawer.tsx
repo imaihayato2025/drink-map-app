@@ -15,7 +15,7 @@ type Props = {
   selectedVM: VendingMachine | null;
   onClose: () => void;
   likedVMs: string[];
-  toggleLike: (title: string) => void;
+  toggleLike: (id: string) => void;
 };
 
 export default function VendingMachineDrawer({
@@ -42,16 +42,28 @@ export default function VendingMachineDrawer({
     >
       {selectedVM && (
         <Box p={2}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography variant="h6" color="primary">
               {selectedVM.title}
             </Typography>
             <Box>
               <IconButton
-                onClick={() => toggleLike(selectedVM.title)}
-                aria-label={likedVMs.includes(selectedVM.title) ? "いいねを取り消す" : "いいねする"}
+                onClick={() => toggleLike(selectedVM.id)}
+                aria-label={
+                  likedVMs.includes(selectedVM.id)
+                    ? "いいねを取り消す"
+                    : "いいねする"
+                }
               >
-                <FavoriteIcon color={likedVMs.includes(selectedVM.title) ? "error" : "disabled"} />
+                <FavoriteIcon
+                  color={
+                    likedVMs.includes(selectedVM.id) ? "error" : "disabled"
+                  }
+                />
               </IconButton>
               <IconButton onClick={onClose}>
                 <CloseIcon />
@@ -64,7 +76,9 @@ export default function VendingMachineDrawer({
           {selectedVM.drinks.map((drink, i) => (
             <Box key={i} display="flex" justifyContent="space-between" py={0.5}>
               <Typography>{drink}</Typography>
-              <Typography color="text.secondary">{selectedVM.price[i]}円</Typography>
+              <Typography color="text.secondary">
+                {selectedVM.price[i]}円
+              </Typography>
             </Box>
           ))}
         </Box>
