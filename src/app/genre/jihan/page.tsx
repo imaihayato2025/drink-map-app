@@ -9,9 +9,9 @@ import { useRouter } from "next/navigation";
 export default function SodaPage() {
   const router = useRouter();
 
-  const handleNavigate = (drinkName: string) => {
+  const handleNavigate = (companyName: string) => {
     // ここでトップページのURLにdrinkクエリ付けて移動
-    router.push(`/?drink=${encodeURIComponent(drinkName)}`);
+    router.push(`/?company=${encodeURIComponent(companyName)}`);
   };
 
   return (

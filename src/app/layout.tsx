@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Head from "next/head"; // ← 追加
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head>
+        {/* ✅ Google Maps API 読み込み */}
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=NEXT_PUBLIC_GOOGLE_MAPS_API_KEY&libraries=places`}
+          async
+          defer
+        />
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
