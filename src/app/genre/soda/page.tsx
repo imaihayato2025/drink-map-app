@@ -29,7 +29,7 @@ export default function SodaPage() {
         </Stack>
       </Box>
 
-            <Box sx={{ pt: 2 }}>
+      <Box sx={{ pt: 2 }}>
         <Stack spacing={0} sx={{ width: "100%" }}>
           <CustomButton
             label="アルギニン"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { IconButton, Snackbar, Alert } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import VendingMachineDrawer from "./VendingMachineDrawer";
@@ -41,7 +41,7 @@ const vendingMachinesData: VendingMachine[] = [
     price: [130, 140],
     lat: 35.5212,
     lng: 140.0882,
-    company: "サントリー",
+    company: "キリン",
   },
   {
     id: "0003",
@@ -78,6 +78,24 @@ const vendingMachinesData: VendingMachine[] = [
     lat: 35.5327,
     lng: 140.1114,
     company: "サントリー",
+  },
+  {
+    id: "0007",
+    title: "有限会社共成建設前",
+    drinks: ["アルギニン"],
+    price: [110],
+    lat: 35.5365,
+    lng: 140.1261,
+    company: "キリン",
+  },
+  {
+    id: "0008",
+    title: "江東自動車横",
+    drinks: ["アルギニン"],
+    price: [120],
+    lat: 35.5368,
+    lng: 140.1279,
+    company: "キリン",
   },
 ];
 // 他のデータも同様に company を追加
@@ -212,7 +230,7 @@ export default function MapContainer({
     });
   };
 
-  const initMap = () => {
+  const initMap = useCallback(() => {
     if (!mapRef.current || !window.google?.maps) return;
 
     const fallbackCenter = { lat: 35.5791, lng: 140.0943 };
@@ -287,7 +305,7 @@ export default function MapContainer({
         mapObj.setCenter(fallbackCenter);
       }
     );
-  };
+  }, [drinkName, companyName]);
 
   useEffect(() => {
     if (window.google?.maps) {
@@ -311,7 +329,7 @@ export default function MapContainer({
       };
       document.head.appendChild(script);
     }
-  }, [drinkName, companyName]);
+  }, [drinkName, companyName, initMap, map]);
 
   return (
     <>

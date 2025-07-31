@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import SearchMenu from "./components/SearchMenu";
 import MapContainer from "./components/MapContainer";
 import MenuBtn from "./components/MenuBtn";
 import Loading from "./components/Loading";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(true);
   const [drinkName, setDrinkName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -23,23 +27,33 @@ export default function Home() {
     }
   }, []);
 
-  const handleSearch = (input: string) => {
-    // 入力をスペースで区切る
-    const keywords = input.trim().split(/\s+/);
+  // URLのクエリを監視して状態に反映
+  useEffect(() => {
+    const drink = searchParams.get("drink") ?? "";
+    const company = searchParams.get("company") ?? "";
+    setDrinkName(drink);
+    setCompanyName(company);
+  }, [searchParams]);
 
-    // 会社名候補リスト
+  const handleSearch = (input: string) => {
+    const keywords = input.trim().split(/\s+/);
     const companies = ["サントリー", "アサヒ", "コカ・コーラ"];
 
-    // 会社名を探す
     const company = keywords.find((kw) =>
       companies.some((c) => kw.includes(c))
     );
 
-    // 会社名でないキーワードを飲み物名として取得
     const drink = keywords.find((kw) => !companies.some((c) => kw.includes(c)));
 
     setCompanyName(company || "");
     setDrinkName(drink || "");
+
+    // URLを更新して状態と同期
+    router.push(
+      `/?drink=${encodeURIComponent(drink || "")}&company=${encodeURIComponent(
+        company || ""
+      )}`
+    );
   };
 
   if (isLoading) return <Loading />;
