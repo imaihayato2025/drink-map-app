@@ -15,12 +15,12 @@ const options = [
   {
     label: "自販機の種類で探す",
     icon: <LocalDrinkIcon fontSize="inherit" />,
-    path: "/genre/soda",
+    path: "/genre/jihan",
   },
   {
     label: "炭酸の種類で探す",
     icon: <BubbleChartIcon fontSize="inherit" />,
-    path: "/genre/jihan",
+    path: "/genre/soda",
   },
   {
     label: "近くから探す",

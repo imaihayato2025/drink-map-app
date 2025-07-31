@@ -6,7 +6,7 @@ import MenuBtn from "../../components/MenuBtn";
 import Header from "../../components/Header";
 import { useRouter } from "next/navigation";
 
-export default function SodaPage() {
+export default function PricePage() {
   const router = useRouter();
 
   const handleNavigate = (drinkName: string) => {
@@ -16,14 +16,14 @@ export default function SodaPage() {
 
   return (
     <div>
-      <Header title="自販機の種類から探す" />
+      <Header title="炭酸のジュース" />
 
       <Box sx={{ pt: 2 }}>
         <Stack spacing={0} sx={{ width: "100%" }}>
           <CustomButton
-            label="サントリーの自販機を探す"
-            iconSrc="/jihan01.jpg"
-            onClick={() => handleNavigate("サントリー")}
+            label="マウンテンデュー"
+            iconSrc="/tansan01.jpg"
+            onClick={() => handleNavigate("マウンテンデュー")}
           />
           {/* 他のボタンも同様 */}
         </Stack>
@@ -32,9 +32,9 @@ export default function SodaPage() {
       <Box sx={{ pt: 2 }}>
         <Stack spacing={0} sx={{ width: "100%" }}>
           <CustomButton
-            label="キリンの自販機を探す"
-            iconSrc="/jihan02.jpg"
-            onClick={() => handleNavigate("キリン")}
+            label="アルギニン"
+            iconSrc="/tansan02.jpg"
+            onClick={() => handleNavigate("アルギニン")}
           />
           {/* 他のボタンも同様 */}
         </Stack>

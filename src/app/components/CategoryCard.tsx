@@ -12,7 +12,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import MenuBtn from "../components/MenuBtn";
 import Header from "../components/Header";
 
-export default function JihanPage() {
+export default function GenreCard() {
   const router = useRouter();
 
   const handleClick = (genre: string) => {
